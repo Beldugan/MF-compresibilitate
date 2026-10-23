@@ -168,11 +168,31 @@ function construiesteSVG() {
   // margini de tăietură (curbură)
   [xc1, xc2].forEach((x, i) => mk("path", { d: `M${x} ${g.YO1} A 7 ${(g.YO2 - g.YO1) / 2} 0 0 ${i ? 1 : 0} ${x} ${g.YO2}`, fill: "none", stroke: "#000", "stroke-width": 1.4, opacity: 0.35 }, ap));
 
-  // pistonul / tija (partea interioară) – mobilă
+  // alezajul de ghidare Ø d: camera Ø D se continuă spre dreapta cu un alezaj de diametrul pistonului,
+  // în care pistonul alunecă etanș (inele O) pe toată secțiunea – volumul dislocat rămâne n·πd²/4·s
+  g.xGh = g.tip0 - 17.5 * g.PX - 6;   // începutul alezajului (cursa maximă ≈ 17 rotații)
+  const ghTop = `M${g.xGh - 14} ${g.YS} L${xc2} ${g.YS} L${xc2} ${g.YA - g.rR} L${g.xGh} ${g.YA - g.rR} Z`;
+  const ghBot = `M${g.xGh - 14} ${g.YJ} L${xc2} ${g.YJ} L${xc2} ${g.YA + g.rR} L${g.xGh} ${g.YA + g.rR} Z`;
+  [ghTop, ghBot].forEach(d => { mk("path", { d, fill: "url(#pPeriat)" }, ap); mk("path", { d, fill: "url(#pHasura)" }, ap); });
+  mk("line", { x1: g.xGh, y1: g.YA - g.rR, x2: xc2, y2: g.YA - g.rR, stroke: "#3c4248", "stroke-width": 1.2 }, ap);
+  mk("line", { x1: g.xGh, y1: g.YA + g.rR, x2: xc2, y2: g.YA + g.rR, stroke: "#3c4248", "stroke-width": 1.2 }, ap);
+  mk("line", { x1: g.xGh - 14, y1: g.YS, x2: g.xGh, y2: g.YA - g.rR, stroke: "#5a6168", "stroke-width": 1 }, ap);
+  mk("line", { x1: g.xGh - 14, y1: g.YJ, x2: g.xGh, y2: g.YA + g.rR, stroke: "#5a6168", "stroke-width": 1 }, ap);
+
+  // pistonul (plonjor Ø d) – umple complet alezajul de ghidare; mobil
   E.mobilInt = mk("g", {}, ap);
-  mk("rect", { x: g.tip0, y: g.YA - g.rR, width: g.xNut - g.tip0 + 4, height: 2 * g.rR, fill: "url(#gCrom)" }, E.mobilInt);
-  mk("ellipse", { cx: g.tip0, cy: g.YA, rx: 3.5, ry: g.rR, fill: "#c8ced4", stroke: "#6f7780", "stroke-width": 0.8 }, E.mobilInt);
-  mk("line", { x1: g.tip0 + 3, y1: g.YA - g.rR + 1, x2: g.tip0 + 3, y2: g.YA + g.rR - 1, stroke: "#fff", "stroke-width": 0.8, opacity: 0.8 }, E.mobilInt);
+  const rp = g.rR - 0.4;
+  mk("rect", { x: g.tip0, y: g.YA - rp, width: g.xNut - g.tip0 + 4, height: 2 * rp, fill: "url(#gCrom)" }, E.mobilInt);
+  // canalele cu inele O (etanșează pe toată circumferința) și inelul de sprijin
+  [8, 17].forEach(o => {
+    mk("rect", { x: g.tip0 + o, y: g.YA - rp, width: 4.5, height: 2 * rp, fill: "#2f3439" }, E.mobilInt);
+    mk("rect", { x: g.tip0 + o + 0.4, y: g.YA - g.rR - 0.6, width: 3.7, height: 2 * g.rR + 1.2, rx: 1.8, fill: "#1f5b4d" }, E.mobilInt);
+    mk("rect", { x: g.tip0 + o + 1, y: g.YA - g.rR, width: 1.2, height: 2 * g.rR, fill: "#5fa58f", opacity: 0.55 }, E.mobilInt);
+  });
+  mk("rect", { x: g.tip0 + 23, y: g.YA - rp, width: 2, height: 2 * rp, fill: "#e8e2cf", opacity: 0.9 }, E.mobilInt);
+  // fața frontală (ușor teșită) a pistonului
+  mk("path", { d: `M${g.tip0 + 3} ${g.YA - rp} L${g.tip0} ${g.YA - rp + 3} L${g.tip0} ${g.YA + rp - 3} L${g.tip0 + 3} ${g.YA + rp} Z`, fill: "#b9c0c7", stroke: "#6f7780", "stroke-width": 0.6 }, E.mobilInt);
+  mk("line", { x1: g.tip0 + 4, y1: g.YA - rp + 1, x2: g.tip0 + 4, y2: g.YA + rp - 1, stroke: "#fff", "stroke-width": 0.8, opacity: 0.7 }, E.mobilInt);
 
   // inelul necret din dreapta + garnitura O-ring
   mk("rect", { x: xc2, y: g.YO1, width: 12, height: g.YO2 - g.YO1, fill: "url(#gOtel)" }, ap);
@@ -329,6 +349,7 @@ function construiesteSVG() {
   et(MX + 72, 34, "manometru 0…160 bar", MX + MR + 6, MY - 12);
   et(g.xAer - 36, 98, "șurub de aerisire", g.xAer, g.YO1 - 32, "end");
   E.etCil = et(140, 380, "", g.XS + 18, g.YO2 - 4);
+  et(420, 392, "alezaj de ghidare Ø d, pistonul etanșat cu inele O", g.xGh + 22, g.YA + g.rR + 5);
   E.etPiston = mk("text", { x: g.xNut + 4, y: g.YA + g.rS + 24, "font-size": 11.5 }, E.etichete);
   const tr = mk("text", { x: g.xRoata - 6, y: 326, "font-size": 11.5, "text-anchor": "middle" }, E.etichete); tr.textContent = "roată de manevră";
   E.cursa = mk("text", { x: g.xNut + 4, y: g.YA + g.rS + 40, "font-size": 11, fill: "var(--text-sec)" }, svg);
@@ -426,7 +447,7 @@ function actualizeazaSVG(p, pAc, dt) {
   if (arataS) {
     const L = 8 + Math.min(1, p / 100) * (g.rB - 18);
     let s = "";
-    [g.XS + 250, g.XS + 330, g.XS + 410].forEach(x => {
+    [g.XS + 190, g.XS + 270, g.XS + 350].forEach(x => {
       if (x > g.tip0 - dx - 10) return;
       s += `<line x1="${x}" y1="${g.YA - 6}" x2="${x}" y2="${g.YA - 6 - L}" stroke="#5a3d00" stroke-width="1.6" opacity=".55" marker-end="url(#mS)"/>`;
       s += `<line x1="${x}" y1="${g.YA + 6}" x2="${x}" y2="${g.YA + 6 + L}" stroke="#5a3d00" stroke-width="1.6" opacity=".55" marker-end="url(#mS)"/>`;
@@ -466,7 +487,7 @@ function actualizeazaSVG(p, pAc, dt) {
       const r = rPx(Vb * f) * Math.cbrt(scale);
       if (r > 0.2) sb += bulaSVG(x + Math.sin(t * 1.7 + i) * 0.5, g.YS, Math.max(1, r), t, i * 1.3);
     }
-    if (arataE && u > 2.4) sb += `<text x="${g.XS + 95 + nb * 62 + 4}" y="${g.YS + rPx(Vb * f) + 6}" font-size="10.5" fill="#2f2306">${nb} × Ø${fmt(sim.dBula, 1)} mm → ${fmt(sim.Vinj * f, 3)} cm³</text>`;
+    if (arataE && u > 2.4) sb += `<text x="${g.XS + 80}" y="${g.YS + 2 * rPx(Vb * f) + 16}" font-size="10.5" fill="#2f2306">${nb} × Ø${fmt(sim.dBula, 1)} mm → ${fmt(sim.Vinj * f, 3)} cm³</text>`;
   }
   E.bule.innerHTML = sb;
 
