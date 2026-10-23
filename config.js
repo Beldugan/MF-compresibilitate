@@ -9,7 +9,7 @@ const CONFIG = {
 
   // Adresa aplicației web Google Apps Script (Deploy → Web app → URL care se termină în /exec).
   // Lăsată goală, aplicația rulează în mod demonstrativ: fără prezență și fără trimiterea referatului.
-  endpoint: "",
+  endpoint: "https://script.google.com/macros/s/AKfycbwOr2gf7rGCzz3zEO1B-CgpRfqALPQptHUGhMu1Tsf86cdCo7prsaIFFJx5NfeLduQoDA/exec",
 
   // Domeniul de e-mail acceptat pentru studenți (gol = orice adresă Google).
   domeniuEmail: "",
