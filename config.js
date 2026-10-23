@@ -15,7 +15,7 @@ const CONFIG = {
   domeniuEmail: "",
 
   // Variantele individuale ale bulei de aer (varianta b)
-  bula: { dMin: 5, dMax: 11, pasD: 0.5, nMin: 1, nMax: 4, VmaxCm3: 1.2 },
+  bula: { dMin: 5, dMax: 11, pasD: 0.5, nMin: 1, nMax: 4, VmaxCm3: 1.0 }, // seringa de 1 cm³ din îndrumar
 
   // Cerințe minime pentru referat
   referat: { minConcluzii: 250, minDurataMin: 8 }

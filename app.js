@@ -281,8 +281,10 @@ function paleta(forteazaLuminos) {
 function niceMax(v) { if (!(v > 0)) return 1; const e = Math.pow(10, Math.floor(Math.log10(v))); const m = v / e; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * e; }
 function deseneazaGrafic(cv, o, luminos) {
   const dpr = window.devicePixelRatio || 1;
-  const W = cv.clientWidth || 600, H = parseInt(cv.getAttribute("height"), 10) || 300;
-  cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + "px";
+  // înălțimea de proiect se citește o singură dată (atributul height se schimbă la redimensionarea pentru ecrane HiDPI)
+  if (!cv.dataset.h) cv.dataset.h = parseInt(cv.getAttribute("height"), 10) || 300;
+  const W = cv.clientWidth || 600, H = +cv.dataset.h;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = H + "px";
   const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
   const P = paleta(luminos);
   g.fillStyle = P.fundal; g.fillRect(0, 0, W, H);

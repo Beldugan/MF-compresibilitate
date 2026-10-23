@@ -254,18 +254,40 @@ function construiesteSVG() {
   mk("path", { d: "M600 128 L640 128 L590 322 L560 322 Z", fill: "#fff", opacity: 0.08 }, E.ecran);
   const te = mk("text", { x: 704, y: 138, "font-size": 10.5, "text-anchor": "end", fill: "#4d7fb8" }, E.ecran); te.textContent = "ecran de protecție (policarbonat)";
 
-  /* seringa (animație) */
+  /* seringa de 1 cm³ (animație): pistonul de cauciuc etanșează pe toată secțiunea interioară a cilindrului */
   E.seringa = mk("g", { opacity: 0 }, svg);
-  const sx = g.xAer, sy0 = g.YO1 - 30; // vârful acului
-  mk("line", { x1: sx, y1: sy0, x2: sx, y2: sy0 - 22, stroke: "#9aa3ac", "stroke-width": 1.4 }, E.seringa);
-  mk("rect", { x: sx - 4, y: sy0 - 28, width: 8, height: 7, rx: 1, fill: "#2c7a9b", opacity: 0.85 }, E.seringa);
-  mk("rect", { x: sx - 9, y: sy0 - 92, width: 18, height: 64, rx: 3, fill: "url(#gSeringa)", stroke: "#8aa0b6", "stroke-width": 0.8 }, E.seringa);
-  for (let k = 0; k <= 10; k++) mk("line", { x1: sx - 9, y1: sy0 - 34 - k * 5.4, x2: sx - (k % 5 ? 5 : 2), y2: sy0 - 34 - k * 5.4, stroke: "#36424f", "stroke-width": 0.6 }, E.seringa);
-  mk("rect", { x: sx - 14, y: sy0 - 95, width: 28, height: 4, rx: 1.5, fill: "#e6edf3", stroke: "#8aa0b6", "stroke-width": 0.6 }, E.seringa);
-  E.piston = mk("g", {}, E.seringa);
-  mk("rect", { x: sx - 2.5, y: sy0 - 126, width: 5, height: 40, fill: "#f3f6f9", stroke: "#9fb0c0", "stroke-width": 0.6 }, E.piston);
-  mk("rect", { x: sx - 8, y: sy0 - 90, width: 16, height: 6, rx: 1, fill: "#2b2f35" }, E.piston);
-  mk("rect", { x: sx - 11, y: sy0 - 130, width: 22, height: 5, rx: 2, fill: "#f3f6f9", stroke: "#9fb0c0", "stroke-width": 0.6 }, E.piston);
+  const sx = g.xAer, sy0 = g.YO1 - 30;          // vârful acului, în șurubul de aerisire
+  const S = SV.ser = { sx, yZ: sy0 - 30, Lml: 40, ri: 8, re: 10 }; // yZ = reperul 0; Lml = lungimea pentru 1 cm³
+  const yTop = S.yZ - S.Lml - 4;
+  grad(defs, "gSerSticla", [[0, "#dbe7f1", 0.75], [0.18, "#ffffff", 0.35], [0.5, "#f4f9fd", 0.12], [0.82, "#ffffff", 0.3], [1, "#b9c9d8", 0.7]], { x1: 0, y1: 0, x2: 1, y2: 0 });
+  grad(defs, "gSerCauciuc", [[0, "#1b1d20"], [0.35, "#4a4f57"], [0.55, "#2a2d31"], [1, "#0f1012"]], { x1: 0, y1: 0, x2: 1, y2: 0 });
+  grad(defs, "gSerTija", [[0, "#d9e1e8"], [0.4, "#ffffff"], [1, "#b7c4d0"]], { x1: 0, y1: 0, x2: 1, y2: 0 });
+  // acul și conul Luer
+  mk("line", { x1: sx, y1: sy0, x2: sx, y2: sy0 - 20, stroke: "#8f99a3", "stroke-width": 1.3 }, E.seringa);
+  mk("line", { x1: sx - 0.4, y1: sy0 - 1, x2: sx - 0.4, y2: sy0 - 19, stroke: "#fff", "stroke-width": 0.4, opacity: 0.8 }, E.seringa);
+  mk("path", { d: `M${sx - 4} ${sy0 - 26} L${sx + 4} ${sy0 - 26} L${sx + 3} ${sy0 - 20} L${sx - 3} ${sy0 - 20} Z`, fill: "#2c7a9b", opacity: 0.85 }, E.seringa);
+  mk("path", { d: `M${sx - S.re} ${S.yZ + 1} L${sx + S.re} ${S.yZ + 1} L${sx + 2.5} ${sy0 - 26} L${sx - 2.5} ${sy0 - 26} Z`, fill: "url(#gSerSticla)", stroke: "#8aa0b6", "stroke-width": 0.7 }, E.seringa);
+  // cilindrul (sticlă / polipropilenă transparentă) cu pereți
+  mk("rect", { x: sx - S.re, y: yTop, width: 2 * S.re, height: S.yZ - yTop + 1, fill: "url(#gSerSticla)", stroke: "#8aa0b6", "stroke-width": 0.8 }, E.seringa);
+  mk("rect", { x: sx - S.ri, y: yTop, width: 2 * S.ri, height: S.yZ - yTop, fill: "#ffffff", opacity: 0.18 }, E.seringa);
+  E.serAer = mk("rect", { x: sx - S.ri, width: 2 * S.ri, y: S.yZ, height: 0, fill: "#e3f1ff", opacity: 0.55 }, E.seringa);
+  // pistonul (dop de cauciuc pe toată secțiunea interioară) + tija în cruce + apăsătorul
+  E.serPiston = mk("g", {}, E.seringa);
+  const Lt = S.Lml + 4;
+  mk("rect", { x: sx - 1.6, y: -7 - Lt, width: 3.2, height: Lt, fill: "url(#gSerTija)", stroke: "#9fb0c0", "stroke-width": 0.5 }, E.serPiston);
+  mk("rect", { x: sx - 5, y: -7 - Lt, width: 10, height: Lt, fill: "url(#gSerTija)", opacity: 0.55, stroke: "#b3c2cf", "stroke-width": 0.4 }, E.serPiston);
+  mk("rect", { x: sx - 12, y: -7 - Lt - 4, width: 24, height: 4, rx: 1.5, fill: "url(#gSerTija)", stroke: "#9fb0c0", "stroke-width": 0.6 }, E.serPiston);
+  mk("rect", { x: sx - S.ri, y: -7, width: 2 * S.ri, height: 7, rx: 0.8, fill: "url(#gSerCauciuc)" }, E.serPiston);
+  [-6.2, -1.6].forEach(y => mk("rect", { x: sx - S.ri - 0.3, y, width: 2 * S.ri + 0.6, height: 1.6, rx: 0.8, fill: "#2a2d31" }, E.serPiston)); // nervurile de etanșare pe pereți
+  mk("path", { d: `M${sx - S.ri} 0 L${sx + S.ri} 0 L${sx + 3} 2.2 L${sx - 3} 2.2 Z`, fill: "#1b1d20" }, E.serPiston); // vârful conic al dopului
+  // gradațiile 0…1 cm³ (peste piston, pe fața cilindrului) și aripioarele
+  for (let k = 0; k <= 10; k++) {
+    const y = S.yZ - k / 10 * S.Lml, maj = k % 5 === 0;
+    mk("line", { x1: sx - S.re, y1: y, x2: sx - S.re + (maj ? 7 : 4), y2: y, stroke: "#1f2a36", "stroke-width": maj ? 0.8 : 0.5 }, E.seringa);
+    if (maj && k) { const t = mk("text", { x: sx + S.re + 2, y: y + 2.5, "font-size": 6.5, fill: "#1f2a36" }, E.seringa); t.textContent = k === 10 ? "1 ml" : "0,5"; }
+  }
+  mk("rect", { x: sx - 17, y: yTop - 3, width: 34, height: 3.5, rx: 1.5, fill: "#e6edf3", stroke: "#8aa0b6", "stroke-width": 0.6 }, E.seringa);
+  mk("line", { x1: sx - S.re + 1.2, y1: yTop + 2, x2: sx - S.re + 1.2, y2: S.yZ - 1, stroke: "#fff", "stroke-width": 1.2, opacity: 0.7 }, E.seringa);
 
   /* vederea frontală a roții (cadran) */
   const RX = 790, RY = 72, RR = 46;
@@ -433,18 +455,18 @@ function actualizeazaSVG(p, pAc, dt) {
     const nb = Math.max(1, sim.nBule || 1), Vb = sim.Vinj / nb;
     const arataE = document.getElementById("ck-etichete")?.checked !== false;
     let u = A.seringa ? (performance.now() - A.seringa) / 1000 : 9;
-    if (u > 2.6 + 0.35 * nb) A.seringa = null;
+    if (u > 2.4 + 0.35 * nb) A.seringa = null;
     for (let i = 0; i < nb; i++) {
       const xf = g.XS + 95 + i * 62 + (i % 2) * 6;
       let x = xf, scale = 1;
       const ui = u - i * 0.35; // bulele intră una după alta
-      if (ui < 0.6) scale = 0;
-      else if (ui < 1.6) { scale = ui - 0.6; x = g.xAer; }
-      else if (ui < 2.6) { const k = ui - 1.6; x = g.xAer + (xf - g.xAer) * (1 - Math.pow(1 - k, 3)); }
+      if (ui < 0.4) scale = 0;
+      else if (ui < 1.4) { scale = ui - 0.4; x = g.xAer; }
+      else if (ui < 2.4) { const k = ui - 1.4; x = g.xAer + (xf - g.xAer) * (1 - Math.pow(1 - k, 3)); }
       const r = rPx(Vb * f) * Math.cbrt(scale);
       if (r > 0.2) sb += bulaSVG(x + Math.sin(t * 1.7 + i) * 0.5, g.YS, Math.max(1, r), t, i * 1.3);
     }
-    if (arataE && u > 2.6) sb += `<text x="${g.XS + 95 + nb * 62 + 4}" y="${g.YS + rPx(Vb * f) + 6}" font-size="10.5" fill="#2f2306">${nb} × Ø${fmt(sim.dBula, 1)} mm → ${fmt(sim.Vinj * f, 3)} cm³</text>`;
+    if (arataE && u > 2.4) sb += `<text x="${g.XS + 95 + nb * 62 + 4}" y="${g.YS + rPx(Vb * f) + 6}" font-size="10.5" fill="#2f2306">${nb} × Ø${fmt(sim.dBula, 1)} mm → ${fmt(sim.Vinj * f, 3)} cm³</text>`;
   }
   E.bule.innerHTML = sb;
 
@@ -468,7 +490,11 @@ function actualizeazaSVG(p, pAc, dt) {
     const u = (performance.now() - A.seringa) / 1000;
     const op = u < 0.3 ? u / 0.3 : u < 1.8 ? 1 : Math.max(0, 1 - (u - 1.8) / 0.4);
     E.seringa.setAttribute("opacity", op);
-    E.piston.setAttribute("transform", `translate(0,${clamp((u - 0.5) / 1.1, 0, 1) * 52})`);
+    // pistonul împinge aerul: volumul rămas în seringă scade de la V_a0 la 0
+    const S = SV.ser, Vrem = Math.min(1, sim.Vinj) * (1 - clamp((u - 0.4) / 1.0, 0, 1));
+    const yS = S.yZ - Vrem * S.Lml;
+    E.serPiston.setAttribute("transform", `translate(0,${yS})`);
+    E.serAer.setAttribute("y", yS + 2); E.serAer.setAttribute("height", Math.max(0, S.yZ - yS - 2));
     const lift = u < 0.3 ? u / 0.3 : u < 1.8 ? 1 : Math.max(0, 1 - (u - 1.8) / 0.3);
     E.capAer.setAttribute("transform", `translate(-26,${-14 * lift})`);
     E.capAer.setAttribute("opacity", 1 - 0.0 * lift);
@@ -509,7 +535,7 @@ function actualizeazaSVG(p, pAc, dt) {
 
   // etichete
   const arataE = document.getElementById("ck-etichete")?.checked !== false;
-  E.etichete.style.display = arataE ? "" : "none";
+  E.etichete.style.display = arataE && !A.seringa ? "" : "none";
   E.cursa.style.display = arataE ? "" : "none";
   const c = cfg();
   E.etLichid.textContent = arataE ? FLUIDE[sim.fluid].nume.replace(" (de determinat)", "") : "";
