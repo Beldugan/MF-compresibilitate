@@ -23,3 +23,5 @@ Valorile implicite reproduc exemplul din îndrumar: n = 3,90 rot la 100 bar → 
 ## Prezență și trimiterea referatelor
 
 Vedeți `GHID_INSTALARE.md` din dosarul `mf-compresibilitate-server` (Google Sheet + Apps Script). După publicarea scriptului, puneți adresa `/exec` în `config.js` → `endpoint`. Fără ea, aplicația rulează în mod demonstrativ.
+
+> Aplicația s-a mutat în portalul comun: https://beldugan.github.io/autovehicule-rutiere/ (Mecanica fluidelor → Lucrarea 2).
